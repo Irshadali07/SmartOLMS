@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.page-title {
+    margin-bottom:20px;
+}
+
+/* STATS */
+.stats {
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
+.stat-card {
+    flex:1;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* TABLE CARD */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th {
+    background:#0f172a;
+    color:white;
+}
+
+td, th {
+    padding:12px;
+    text-align:center;
+    border:1px solid #ddd;
+}
+
+/* ROW COLORS */
+.overdue {
+    background:#fee2e2;
+}
+.returned {
+    background:#dcfce7;
+}
+
+/* BADGE */
+.badge {
+    padding:5px 10px;
+    border-radius:20px;
+    color:white;
+    font-size:12px;
+}
+.pending { background:#f59e0b; }
+.done { background:#22c55e; }
+
+/* BUTTON */
+button {
+    padding:6px 12px;
+    border:none;
+    background:#22c55e;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+button:hover {
+    background:#16a34a;
+}
+</style>
+
+<h2 class="page-title">🔁 Return Management</h2>
+
+<!-- STATS -->
+<div class="stats">
+    <div class="stat-card">
+        <h3>Total Issues</h3>
+        <h2>{{ issues|length }}</h2>
+    </div>
+    <div class="stat-card">
+        <h3>Pending</h3>
+        <h2>{{ issues | selectattr('return_date', 'equalto', None) | list | length }}</h2>
+    </div>
+    <div class="stat-card">
+        <h3>Returned</h3>
+        <h2>{{ issues | selectattr('return_date') | list | length }}</h2>
+    </div>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+
+    <h3 style="margin:0;">Return Records</h3>
+
+    <form method="GET" action="/returns" style="display:flex; gap:10px;">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search by user..."
+            value="{{ search }}"
+            style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; width:220px;"
+        >
+        <button style="padding:8px 15px; background:#3b82f6; color:white; border:none; border-radius:6px;">
+            Search
+        </button>
+    </form>
+
+</div>
+
+<!-- TABLE -->
+<div class="card">
+<table>
+
+<tr>
+<th>User</th>
+<th>Book</th>
+<th>Due Date</th>
+<th>Fine</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+{% for i in issues %}
+
+{% set late = (now - i.due_date).days if i.due_date else 0 %}
+
+<tr class="
+{% if i.return_date %}
+returned
+{% elif late > 0 %}
+overdue
+{% endif %}
+">
+
+<td>{{ i.user.username }}</td>
+<td>{{ i.book.title }}</td>
+
+<td>{{ i.due_date.strftime('%Y-%m-%d') if i.due_date else '' }}</td>
+
+<td>
+{% if late > 0 %}
+₹{{ late * 5 }}
+{% else %}
+₹0
+{% endif %}
+</td>
+
+<td>
+{% if i.return_date %}
+<span class="badge done">Returned</span>
+{% else %}
+<span class="badge pending">Pending</span>
+{% endif %}
+</td>
+
+<td>
+{% if not i.return_date %}
+<a href="/return_book/{{ i.id }}">
+    <button>Return</button>
+</a>
+{% else %}
+-
+{% endif %}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+
+{% endblock %}

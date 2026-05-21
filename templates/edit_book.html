@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.container-edit {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:80vh;
+}
+
+.card-edit {
+    display:flex;
+    width:700px;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* LEFT IMAGE */
+.image-box {
+    width:50%;
+    background:#0f172a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+}
+
+.image-box img {
+    width:150px;
+    height:200px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+/* RIGHT FORM */
+.form-box {
+    width:50%;
+    padding:30px;
+}
+
+.form-box h2 {
+    margin-bottom:20px;
+}
+
+.form-group {
+    margin-bottom:15px;
+}
+
+.form-group label {
+    font-weight:bold;
+}
+
+.form-group input {
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.btns {
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.save-btn {
+    background:#22c55e;
+}
+
+.cancel-btn {
+    background:#ef4444;
+}
+
+button {
+    padding:10px 15px;
+    border:none;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+</style>
+
+{% if book.file %}
+    {% if book.file.endswith('.pdf') %}
+        <iframe src="/static/{{ book.file }}" width="200" height="250"></iframe>
+    {% else %}
+        <img src="/static/{{ book.file }}" width="150">
+    {% endif %}
+{% endif %}
+
+
+<div class="container-edit">
+
+<div class="card-edit">
+
+    <!-- IMAGE PREVIEW -->
+    <div class="image-box">
+        <img id="preview" src="{{ book.image if book.image else 'https://via.placeholder.com/150' }}">
+        <p>Book Preview</p>
+    </div>
+
+
+
+    <!-- FORM -->
+    <div class="form-box">
+
+        <h2>✏️ Edit Book</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label>Book Name</label>
+                <input type="text" name="title" value="{{ book.title }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" name="image" onchange="previewImage(event)">
+            </div>
+
+            <div class="btns">
+                <button class="save-btn">Update</button>
+                <a href="/books">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById('preview').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
+{% endblock %}

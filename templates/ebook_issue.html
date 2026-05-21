@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* PAGE TITLE */
+.page-title {
+    margin-bottom:20px;
+}
+
+/* STATS */
+.stats {
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
+.stat-card {
+    flex:1;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* CARD */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+
+/* FORM */
+.form {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.form select {
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+.form button {
+    padding:10px 15px;
+    background:#3b82f6;
+    color:white;
+    border:none;
+    border-radius:6px;
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th {
+    background:#0f172a;
+    color:white;
+}
+
+td, th {
+    padding:12px;
+    text-align:center;
+    border:1px solid #ddd;
+}
+
+/* STATUS COLORS */
+.returned {
+    background:#dcfce7;
+}
+.pending {
+    background:#fee2e2;
+}
+
+/* BADGE */
+.badge {
+    padding:5px 10px;
+    border-radius:20px;
+    color:white;
+    font-size:12px;
+}
+.done { background:#22c55e; }
+.wait { background:#f59e0b; }
+
+/* BUTTON */
+button.action {
+    padding:6px 12px;
+    border:none;
+    background:#22c55e;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+button.action:hover {
+    background:#16a34a;
+}
+
+</style>
+
+<h2 class="page-title">eBook Issue Management</h2>
+
+<!-- STATS -->
+<div class="stats">
+    <div class="stat-card">
+        <h3>Total Issues</h3>
+        <h2>{{ issues|length }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Pending</h3>
+        <h2>{{ issues | selectattr('return_date', 'equalto', None) | list | length }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Returned</h3>
+        <h2>{{ issues | selectattr('return_date') | list | length }}</h2>
+    </div>
+</div>
+
+<!-- ISSUE FORM -->
+<div class="card">
+<form method="POST" action="/issue_ebook" class="form">
+
+    <select name="user_id" required>
+        <option disabled selected>Select User</option>
+        {% for u in users %}
+        <option value="{{ u.id }}">{{ u.username }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="ebook_id" required>
+        <option disabled selected>Select eBook</option>
+        {% for b in books %}
+        <option value="{{ b.id }}">{{ b.title }}</option>
+        {% endfor %}
+    </select>
+
+    <button>Issue</button>
+
+</form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+<table>
+
+<tr>
+<th>User</th>
+<th>eBook</th>
+<th>Issue Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+{% for i in issues %}
+
+<tr class="{% if i.return_date %}returned{% else %}pending{% endif %}">
+
+<td>{{ i.user.username }}</td>
+<td>{{ i.ebook.title }}</td>
+
+<td>
+{{ i.issue_date.strftime('%Y-%m-%d') if i.issue_date else '' }}
+</td>
+
+<td>
+{% if i.return_date %}
+<span class="badge done">Returned</span>
+{% else %}
+<span class="badge wait">Pending</span>
+{% endif %}
+</td>
+
+<td>
+{% if not i.return_date %}
+<a href="/return_ebook/{{ i.id }}">
+    <button class="action">Return</button>
+</a>
+{% else %}
+-
+{% endif %}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+
+{% endblock %}

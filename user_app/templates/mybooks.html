@@ -1,0 +1,161 @@
+{% extends "home.html" %}
+
+{% block content %}
+
+<style>
+
+/* PAGE WRAPPER (footer push) */
+.page-wrapper {
+    min-height:70vh;
+}
+
+/* STATS */
+.stats {
+    display:flex;
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.stat-card {
+    flex:1;
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.05);
+    text-align:center;
+    transition:0.3s;
+}
+
+.stat-card:hover {
+    transform:translateY(-5px);
+}
+
+.stat-card h3 {
+    font-size:26px;
+    margin-bottom:5px;
+}
+
+.stat-card p {
+    font-size:14px;
+    color:#666;
+}
+
+.total { border-left:5px solid #3b82f6; }
+.issued { border-left:5px solid #ef4444; }
+.available { border-left:5px solid #22c55e; }
+
+/* TABLE BOX */
+.table-box {
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.05);
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:10px;
+}
+
+th {
+    background:#0f172a;
+    color:white;
+    padding:14px;
+    font-weight:500;
+}
+
+td {
+    padding:14px;
+    border-bottom:1px solid #eee;
+    transition:0.2s;
+}
+
+/* HOVER EFFECT */
+tr:hover td {
+    background:#f8fafc;
+}
+
+/* STATUS BADGES */
+.badge {
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:500;
+}
+
+.pending { background:#fff7ed; color:#ea580c; }
+.returned { background:#ecfdf5; color:#16a34a; }
+.overdue { background:#fef2f2; color:#dc2626; }
+
+/* EMPTY */
+.empty {
+    text-align:center;
+    padding:20px;
+    color:#888;
+}
+
+</style>
+
+<div class="page-wrapper">
+
+<!-- STATS -->
+<div class="stats">
+    <div class="stat-card total">
+        <h3>{{ total }}</h3>
+        <p>Total Books</p>
+    </div>
+
+    <div class="stat-card issued">
+        <h3>{{ issued }}</h3>
+        <p>Issued</p>
+    </div>
+
+    <div class="stat-card available">
+        <h3>{{ available }}</h3>
+        <p>Available</p>
+    </div>
+</div>
+
+<!-- 📚 MY BOOKS -->
+<div class="table-box">
+    <h3 style="margin-bottom:15px;">📚 My Books</h3>
+
+    {% if my_books|length == 0 %}
+        <div class="empty">No books issued yet 📭</div>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>Book</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Status</th>
+        </tr>
+
+        {% for b in my_books %}
+        <tr>
+            <td>{{ b.book.title }}</td>
+            <td>{{ b.issue_date.strftime('%d %b %Y') }}</td>
+            <td>{{ b.due_date.strftime('%d %b %Y') if b.due_date else "-" }}</td>
+
+            <td>
+                {% if b.return_date %}
+                    <span class="badge returned">Returned</span>
+                {% elif b.due_date and b.due_date < now %}
+                    <span class="badge overdue">Overdue</span>
+                {% else %}
+                    <span class="badge pending">Not Returned</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</div>
+
+{% endblock %}

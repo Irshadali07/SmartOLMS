@@ -1,0 +1,175 @@
+{% extends "home.html" %}
+
+{% block content %}
+
+<style>
+
+/* 🔥 POPUP */
+.msg {
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:10px 15px;
+    border-radius:6px;
+    color:white;
+    font-size:14px;
+    z-index:999;
+}
+
+.msg.success { background:#16a34a; }
+.msg.error { background:#dc2626; }
+
+/* PAGE WRAPPER */
+.page-wrapper {
+    min-height:70vh;
+}
+
+.toast-container{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:9999;
+}
+
+.toast{
+    margin-bottom:10px;
+    padding:12px 16px;
+    border-radius:8px;
+    color:white;
+    font-size:14px;
+    animation:fadeOut 3s forwards;
+}
+
+.toast.success{ background:#16a34a; }
+.toast.error{ background:#dc2626; }
+
+@keyframes fadeOut{
+    0%{opacity:1;}
+    80%{opacity:1;}
+    100%{opacity:0; display:none;}
+}
+
+/* GRID */
+.container {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+    gap:25px;
+}
+
+/* CARD */
+.card {
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    transition:0.3s;
+    position:relative;
+}
+
+.card:hover {
+    transform:translateY(-6px);
+}
+
+/* TITLE */
+.card h3 {
+    margin-bottom:10px;
+}
+
+/* STATUS */
+.status {
+    display:inline-block;
+    margin:8px 0;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.available {
+    background:#ecfdf5;
+    color:#16a34a;
+}
+
+.issued {
+    background:#fef2f2;
+    color:#dc2626;
+}
+
+/* BUTTON */
+.btn {
+    margin-top:15px;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+}
+
+.request {
+    background:#3b82f6;
+}
+
+.disabled {
+    background:#ccc;
+    color:#666;
+    cursor:not-allowed;
+}
+
+</style>
+
+<!-- 🔥 FLASH MESSAGE -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="toast-container">
+      {% for category, message in messages %}
+        <div class="toast {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="page-wrapper">
+
+<h2>📚 Books</h2>
+
+<div class="container">
+
+{% for book in books %}
+<div class="card">
+
+    <h3>{{ book.title }}</h3>
+
+    {% if book.available %}
+        <span class="status available">Available</span>
+    {% else %}
+        <span class="status issued">Issued</span>
+    {% endif %}
+
+    {% set already_requested = false %}
+
+    {% for r in book.requests %}
+        {% if r.user_id == session['user_id'] and r.status in ['Pending','Approved'] %}
+            {% set already_requested = true %}
+        {% endif %}
+    {% endfor %}
+
+    {% if already_requested %}
+        <button class="btn disabled">Already Requested</button>
+
+    {% elif book.available %}
+        <a href="/request/{{ book.id }}">
+            <button class="btn request">Request Book</button>
+        </a>
+
+    {% else %}
+        <button class="btn disabled">Already Issued</button>
+    {% endif %}
+
+</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

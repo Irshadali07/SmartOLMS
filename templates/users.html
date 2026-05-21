@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.page-title {
+    margin-bottom:20px;
+}
+
+/* CARD */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
+
+/* LABEL LEFT ALIGN */
+.form-group label {
+    display:block;
+    text-align:left;
+    margin-left:2px;   /* 👈 halka sa shift */
+    margin-bottom:6px;
+    font-weight:500;
+    color:#444;
+}
+.form-group {
+    margin-bottom:18px;
+    padding-right:15px;   /* 👈 subtle left spacing */
+}
+
+/* INPUT alignment improve */
+.form-group input {
+    text-align:left;
+}
+
+input {
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    transition:0.2s;
+}
+
+input:focus {
+    border-color:#3b82f6;
+    box-shadow:0 0 0 2px rgba(59,130,246,0.2);
+    outline:none;
+}
+
+/* Button polish */
+.btn-primary {
+    font-weight:600;
+    letter-spacing:0.3px;
+}
+
+/* CENTER WRAPPER */
+.form-wrapper {
+    display:flex;
+    justify-content:center;
+}
+
+/* CONTROL WIDTH */
+.form-wrapper .card {
+    width:100%;
+    max-width:500px;   /* 👈 ye important hai */
+}
+
+/* BUTTON */
+.btn {
+    padding:10px 15px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-primary {
+    background:#3b82f6;
+    color:white;
+}
+
+.btn-primary:hover {
+    background:#2563eb;
+}
+
+.btn-danger {
+    background:#ef4444;
+    color:white;
+}
+
+.btn-danger:hover {
+    background:#dc2626;
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th {
+    background:#0f172a;
+    color:white;
+}
+
+td, th {
+    padding:12px;
+    text-align:center;
+    border:1px solid #ddd;
+}
+
+tr:hover {
+    background:#f1f5f9;
+}
+</style>
+
+<h2 class="page-title">👥 Manage Users</h2>
+
+<!-- ADD USER -->
+<div class="card">
+
+    <h3 style="margin-bottom:15px;">Add New User</h3>
+
+    <form method="POST" action="/add_user">
+
+        <div class="form-group">
+            <label style="font-size:13px; color:#555;">Username</label>
+            <input type="text" name="username" placeholder="Enter username" required>
+        </div>
+
+        <div class="form-group">
+            <label style="font-size:13px; color:#555;">Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%; margin-top:10px;">
+            + Add User
+        </button>
+
+    </form>
+
+</div>
+
+<!-- USER TABLE -->
+<div class="card">
+    <h3>User List</h3>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>
+                <a href="/delete_user/{{ u.id }}">
+                    <button class="btn btn-danger">Delete</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* HEADER */
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+/* CARD */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
+
+/* FORM */
+.add-form {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.add-form input[type="text"] {
+    flex:2;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.add-form input[type="file"] {
+    flex:2;
+}
+
+.add-form button {
+    padding:10px 15px;
+    background:#3b82f6;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-weight:600;
+}
+
+/* GRID */
+.book-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap:20px;
+}
+
+/* CARD */
+.book-card {
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.book-card:hover {
+    transform: translateY(-6px);
+}
+
+/* IMAGE */
+.book-img {
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+/* BODY */
+.book-body {
+    padding:15px;
+}
+
+.book-title {
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+/* STATUS */
+.status {
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.available {
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.issued {
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+/* ACTIONS */
+.actions {
+    margin-top:10px;
+    display:flex;
+    gap:8px;
+}
+
+.btn {
+    flex:1;
+    padding:6px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.edit-btn { background:#3b82f6; color:white; }
+.delete-btn { background:#ef4444; color:white; }
+.preview-btn { background:#6366f1; color:white; }
+
+.btn:hover {
+    opacity:0.9;
+}
+
+/* MODAL */
+#previewModal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+}
+
+</style>
+
+<!-- HEADER -->
+<div class="header">
+    <h2>Manage Books</h2>
+</div>
+
+<!-- ADD BOOK -->
+<div class="card">
+<form method="POST" action="{{ url_for('books.add_book') }}" enctype="multipart/form-data" class="add-form">
+    <input type="text" name="title" placeholder="Enter book name" required>
+    <input type="file" name="file" accept=".jpg,.jpeg,.png,.pdf">
+    <button>Add Book</button>
+</form>
+</div>
+
+<!-- BOOK GRID -->
+<div class="book-grid">
+
+{% for b in books %}
+<div class="book-card">
+
+    <!-- 🔥 IMAGE (FINAL FIX) -->
+    {% if b.file %}
+        <img src="{{ url_for('static', filename=b.file) }}" class="book-img">
+    {% else %}
+        <img src="https://via.placeholder.com/200x300?text=No+Image" class="book-img">
+    {% endif %}
+
+    <!-- BODY -->
+    <div class="book-body">
+
+        <div class="book-title">{{ b.title }}</div>
+
+        {% if b.available %}
+            <span class="status available">Available</span>
+        {% else %}
+            <span class="status issued">Issued</span>
+        {% endif %}
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+            {% if b.file %}
+                <button class="btn preview-btn"
+                    onclick="openImage('{{ url_for('static', filename=b.file) }}')">
+                    View
+                </button>
+            {% else %}
+                <button class="btn preview-btn" disabled>No File</button>
+            {% endif %}
+
+            <a href="{{ url_for('books.edit_book', id=b.id) }}">
+                <button class="btn edit-btn">Edit</button>
+            </a>
+
+            <a href="{{ url_for('books.delete_book', id=b.id) }}">
+                <button class="btn delete-btn">Delete</button>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- MODAL -->
+<div id="previewModal">
+    <div class="modal-content">
+        <img id="previewImg" style="width:200px; height:300px; object-fit:cover;">
+        <br><br>
+        <button onclick="closePreview()">Close</button>
+    </div>
+</div>
+
+<script>
+function openImage(file){
+    document.getElementById('previewImg').src = file;
+    document.getElementById('previewModal').style.display = "flex";
+}
+
+function closePreview(){
+    document.getElementById('previewModal').style.display = "none";
+}
+</script>
+
+{% endblock %}
