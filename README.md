@@ -30,3 +30,11 @@ https://irshadali0007.pythonanywhere.com
 
 Md Irshad
 (Data Analyst)
+
+## Copyright Notice
+
+© 2026 Md Irshad. All Rights Reserved.
+
+This project is provided for portfolio and demonstration purposes only.
+
+Copying, modifying, redistributing, or commercial use of any part of this project without explicit permission from the author is prohibited.
