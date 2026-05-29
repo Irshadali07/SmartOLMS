@@ -1,6 +1,6 @@
 # SmartOLMS - Smart Online Library Management System
 
-SmartOLMS is a web-based Library Management System developed using Flask, Python, SQLite, HTML, CSS, and JavaScript.
+SmartOLMS is a web-based Library Management System developed using Flask, Python, MYSQl HTML, CSS, and JavaScript.
 
 ## Features
 
