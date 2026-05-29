@@ -29,4 +29,4 @@ https://irshadali0007.pythonanywhere.com
 ## Author
 
 Md Irshad
-MCA Student
+(Data Analyst)
