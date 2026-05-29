@@ -26,10 +26,11 @@ SmartOLMS is a web-based Library Management System developed using Flask, Python
 
 https://irshadali0007.pythonanywhere.com
 
-## Author
+## Notice
+Certain components of this project have been intentionally removed or modified for security reasons and to protect proprietary design elements.
 
-Md Irshad
-(Data Analyst)
+This public repository is provided for demonstration purposes only and does not contain the complete production source code.
+
 
 ## Copyright Notice
 
@@ -38,3 +39,9 @@ Md Irshad
 This project is provided for portfolio and demonstration purposes only.
 
 Copying, modifying, redistributing, or commercial use of any part of this project without explicit permission from the author is prohibited.
+
+
+## Author
+
+Md Irshad
+(Data Analyst)
